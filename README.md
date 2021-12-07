@@ -132,3 +132,15 @@ f6(c=USE_DEFAULTS)
 ```
 base = {k: USE_DEFAULT for k in known_keys}; base.update(kwargs);
 ```
+
+
+DEFAULT = environ.get('MATPLTLIB_FOO', USE_DEFAULT)
+
+
+```
+def f():
+   pass
+f(x=USE_DEFAULT) # error or not ? 
+```
+
+Should likely be an error, avoid typoes/TypeErrors.
