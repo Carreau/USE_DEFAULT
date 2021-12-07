@@ -151,6 +151,8 @@ f(x=USE_DEFAULT) # error or not ?
 
 Should likely be an error, avoid typoes/TypeErrors.
 
+what a bout a pos-only wrapper? can it take USE_DEFAULT ? 
+
 Pep 12 template
 --- 
 PEP: <REQUIRED: pep number>
