@@ -1,4 +1,10 @@
-# USE_DEFAULT
+# USE_DEFAULT / BK.
+
+Note:
+
+To note confuse this with pep 061 (https://www.python.org/dev/peps/pep-0671/) which is also related to default we likely
+want to use another name than USE_DEFAULT. It was suggested the this is also "Unpassable", so we may refer to it as
+BlackKnight from monty python and the holly grail
 
 
 Sentinel value to represent empty parameters.
@@ -144,3 +150,149 @@ f(x=USE_DEFAULT) # error or not ?
 ```
 
 Should likely be an error, avoid typoes/TypeErrors.
+
+Pep 12 template
+--- 
+PEP: <REQUIRED: pep number>
+Title: <REQUIRED: pep title>
+Author: <REQUIRED: list of authors' real names and optionally, email addrs>
+Sponsor: <real name of sponsor>
+PEP-Delegate: <PEP delegate's real name>
+Discussions-To: <email address or URL>
+Status: <REQUIRED: Draft | Active | Accepted | Provisional | Deferred | Rejected | Withdrawn | Final | Superseded>
+Type: <REQUIRED: Standards Track | Informational | Process>
+Requires: <pep numbers>
+Created: <date created on, in dd-mmm-yyyy format>
+Python-Version: <version number>
+Post-History: <REQUIRED: dates of postings to python-ideas and/or python-dev, in dd-mmm-yyyy format>
+Replaces: <pep number>
+Superseded-By: <pep number>
+Resolution: <url>
+
+
+Abstract
+========
+
+Function caller often want a way to explicitly call a function with a argument asking the callee to use a default value. 
+We suggest the introduction of an ``Unpassable`` singleton, which when present in a call site is not passed to the callee,
+leading to the given function using it's default value.
+
+
+Motivation
+==========
+
+In many cases, especially when wrapping lower level API it can be inconvenient to expose lower level function default. 
+While some singletons like ``None`` can often be used, they are also valid values to call a function with, and extra
+care must be taken when propagating default. Thus you can often see libraries using singletons:
+
+
+```
+# protocol.py
+_USE_GLOBAL_DEFAULT = object()
+def connect(timeout=_USE_GLOBAL_DEFAULT):
+    if timeout is _USE_GLOBAL_DEFAULT:
+        timeout = default_timeout
+    ...
+
+# request.py
+
+from protocol import _USE_GLOBAL_DEFAULT
+
+def request(url, timeout=_USE_GLOBAL_DEFAULT):
+    ...
+    connect(timeout=timeout)
+
+```
+
+To avoid importing private objects, or using magics constants, callers can also unpack arguments:
+
+
+``
+DEFAULT = object()
+
+def request(url, timeout=DEFAULT):
+    ...
+
+    kwargs = {...}
+    if timeout is not DEFAULT:
+        kwargs['timeout'] = timeout
+    connect(**kwargs)
+
+
+```
+
+[Clearly explain why the existing language specification is inadequate to address the problem that the PEP solves.]
+
+
+Rationale
+=========
+
+[Describe why particular design decisions were made.]
+
+
+Specification
+=============
+
+[Describe the syntax and semantics of any new language feature.]
+
+
+Backwards Compatibility
+=======================
+
+[Describe potential impact and severity on pre-existing code.]
+
+
+Security Implications
+=====================
+
+[How could a malicious user take advantage of this new feature?]
+
+
+How to Teach This
+=================
+
+[How to teach users, new and experienced, how to apply the PEP to their work.]
+
+
+Reference Implementation
+========================
+
+[Link to any existing implementation and details about its state, e.g. proof-of-concept.]
+
+
+Rejected Ideas
+==============
+
+[Why certain ideas that were brought while discussing this PEP were not ultimately pursued.]
+
+
+Open Issues
+===========
+
+[Any points that are still being decided/discussed.]
+
+
+References
+==========
+
+[A collection of URLs used as references through the PEP.]
+
+
+Copyright
+=========
+
+This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.
+
+
+
+..
+    Local Variables:
+    mode: indented-text
+    indent-tabs-mode: nil
+    sentence-end-double-space: t
+    fill-column: 70
+    coding: utf-8
+    End:
+
+
