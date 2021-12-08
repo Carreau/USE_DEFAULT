@@ -4,7 +4,12 @@ unpassable toy implementation
 __version__ = '0.0.1'
 
 
-Unpassable = object()
+class UP:
+
+    def __repr__(self):
+        return "<Unpassable>"
+
+Unpassable =  UP()
 
 
 from functools import wraps
@@ -22,11 +27,20 @@ def ignore_unpassable(fun):
 
     @wraps(fun)
     def wrapper(*args, **kwargs):
-
-        for arg, param in zip(args, sig.parameters.values()):
-            if (p.kind in p.POSITIONAL_ONLY) and (arg is Unpassable):
+        nargs = []
+        for arg,(name, p )in zip(args, sig.parameters.items()):
+            if (p.kind in (p.POSITIONAL_ONLY, p.VAR_POSITIONAL)) and (arg is Unpassable):
                 raise TypeError('Unpassable cannot be passed as positional arg')
+                nargs.append(arg)
+            else:
+              if p is not Unpassable:
+                  kwargs[name] = arg
+                  
+
 
         kw_copy = {k:v for k,v in kwargs.items() if v is not Unpassable }
-        return fun(*args, **kwargs)
+        #print(nargs, kw_copy)
+        return fun(*nargs, **kw_copy)
+
+    return wrapper
 
