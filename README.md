@@ -241,19 +241,54 @@ Specification
 Backwards Compatibility
 =======================
 
-[Describe potential impact and severity on pre-existing code.]
-
+This proposal is fully backward compatible, and be provided opt-in on a per-function basis by a package on PyPI.
 
 Security Implications
 =====================
 
-[How could a malicious user take advantage of this new feature?]
+We don't foresee any security implication with the usage of USE_DEFAULT.
 
+
+Type System
+===========
+
+This may need special consideration for the type system. As USE_DEFAULT will never be passed into a function but is its
+own type, it should not be considered a type mismatch. 
+
+
+Performance Consideration
+==========================
+
+This will add an overhead to each function call, we haven't investigate the full performance impact.
 
 How to Teach This
 =================
 
-[How to teach users, new and experienced, how to apply the PEP to their work.]
+There are two sides of teaching the usage of USE_DEFAULT: from the caller and the callee side. 
+
+We can explain that calling a function with `USE_DEFAULT` as a parameter is equivalent to not passing this parameter.
+
+```
+plot(x, y, color=USE_DEFAULT) 
+plot(x, y) # is the same.
+```
+
+We also expect the `USE_DEFAULT` sentinel to be useful to teach and discover libraries.
+For example a tutorial can show the full signature of a function without having to replicate all values. 
+
+```
+plt.plot(x, y, 
+    scalex=USE_DEFAULT,
+    scaley=USE_DEFAULT,
+    data=USE_DEFAULT,
+    alpha=USE_DEFAULT,
+    label=USE_DEFAULT,
+    use_order=USE_DEFAULT,
+    ...)
+```
+
+For intermediate users, we can teach USE_DEFAULT as the same time as kwargs with default values, 
+as setting a default value to USE_DEFAULT is the only time where a function can get it as an input value.
 
 
 Reference Implementation
